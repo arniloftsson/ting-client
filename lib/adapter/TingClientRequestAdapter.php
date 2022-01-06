@@ -69,7 +69,13 @@ class TingClientRequestAdapter {
         $stopTime = explode(' ', microtime());
         $time = floatval(($stopTime[1]+$stopTime[0]) - ($startTime[1]+$startTime[0]));
 
-        $this->logger->log('Completed SOAP request ' . $soapAction . ' ' . $request->getWsdlUrl() . ' (' . round($time, 3) . 's). Request body: ' . $client->requestBodyString . ' Response: ' . $response);
+        $requestBodyString = $client->requestBodyString;
+        If ($request instanceof TingClientInfomediaRequest ) {
+          // We can't log the request because it contains user data
+          $requestBodyString = '';
+        }
+
+        $this->logger->log('Completed SOAP request ' . $soapAction . ' ' . $request->getWsdlUrl() . ' (' . round($time, 3) . 's). Request body: ' .  $requestBodyString . ' Response: ' . $response);
 
         // If using JSON and DKABM, we help parse it.
         if ($soapParameters['outputType'] == 'json') {
